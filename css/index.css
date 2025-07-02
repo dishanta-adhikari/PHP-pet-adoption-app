@@ -1,0 +1,240 @@
+/* Background & Overlay */
+body {
+    background: url('assets/images/dog1.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #333;
+    font-family: 'Poppins', Tahoma, Geneva, Verdana, sans-serif;
+    padding-bottom: 80px;
+    /* Space at bottom */
+}
+
+.overlay {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.85), rgba(255, 152, 0, 0.85));
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    backdrop-filter: brightness(0.8);
+}
+
+/* Hero Section */
+.hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 120px 20px 60px;
+    color: #222;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+h1.display-3 {
+    color: #ffca28;
+    /* bright yellow */
+    text-shadow: 1px 1px 5px #b28704;
+}
+
+p.lead {
+    color: #6b4c00;
+    /* darker yellow/brown */
+    font-weight: 600;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* Search Bar */
+.search-bar {
+    max-width: 600px;
+    margin: 30px auto;
+}
+
+.form-control {
+    border-radius: 30px;
+    border: 2px solid #ffb300;
+    box-shadow: none;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-control:focus {
+    border-color: #ffa000;
+    box-shadow: 0 0 8px #ffb300;
+    outline: none;
+    color: #222;
+}
+
+/* Register Button (yellow theme) */
+.btn-warning.custom-reg-btn {
+    background-color: #ffb300;
+    border: none;
+    border-radius: 30px;
+    box-shadow: 0 4px 8px rgba(255, 179, 0, 0.5);
+    color: #3e2723;
+    font-weight: 700;
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+    user-select: none;
+}
+
+.btn-warning.custom-reg-btn:hover,
+.btn-warning.custom-reg-btn:focus {
+    background-color: #ffa000;
+    box-shadow: 0 6px 12px rgba(255, 179, 0, 0.7);
+    color: #2e1b16;
+    outline: none;
+    text-decoration: none;
+}
+
+/* Custom Buttons */
+.btn-custom {
+    font-size: 1.1rem;
+    margin: 10px;
+    padding: 12px 24px;
+    font-weight: 600;
+    border-radius: 30px;
+    box-shadow: 0 3px 8px rgba(255, 179, 0, 0.4);
+    transition: all 0.3s ease;
+}
+
+.btn-custom.btn-outline-light {
+    color: #ffca28;
+    border-color: #ffca28;
+}
+
+.btn-custom.btn-outline-light:hover {
+    background-color: #ffca28;
+    color: #422800;
+    box-shadow: 0 4px 10px rgba(255, 202, 40, 0.8);
+}
+
+/* Sections */
+.section {
+    padding: 60px 20px;
+    margin-top: 40px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgb(0 0 0 / 0.1);
+    color: #4e342e;
+    transition: background-color 0.3s ease;
+}
+
+/* Odd sections: white background */
+.section:nth-of-type(odd) {
+    background-color: #fff;
+}
+
+/* Even sections: light yellow background */
+.section:nth-of-type(even) {
+    background-color: rgba(255, 193, 7, 0.15);
+    box-shadow: 0 8px 20px rgba(255, 193, 7, 0.3);
+}
+
+/* Featured Pets Marquee Section */
+.marquee-container {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    padding: 40px 0;
+    background: transparent;
+    box-shadow: none !important;
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    /* vertically center pets */
+    height: 320px;
+    /* height for images + text */
+}
+
+.marquee-content {
+    display: flex;
+    gap: 2rem;
+    width: max-content;
+    /* needed for animation */
+    animation: marquee 20s linear infinite;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(calc(-50%));
+    }
+}
+
+/* Individual pet cards in marquee */
+.featured-pet {
+    flex-shrink: 0;
+    min-width: 280px;
+    text-align: center;
+    color: #4e342e;
+    font-weight: normal;
+}
+
+.featured-pet img {
+    width: 280px;
+    height: auto;
+    border-radius: 15px;
+    box-shadow: 0 6px 15px rgba(255, 179, 0, 0.5);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.featured-pet img:hover {
+    transform: scale(1.1);
+}
+
+.featured-pet h5 {
+    margin-top: 0.8rem;
+    color: #ffb300;
+    font-weight: 700;
+}
+
+.featured-pet p {
+    color: #6d4c41;
+    font-weight: 600;
+}
+
+/* Testimonials */
+.testimonial strong {
+    display: block;
+    margin-top: 12px;
+    font-style: italic;
+    color: #bf360c;
+    font-weight: 700;
+}
+
+/* Modal */
+.modal-content.bg-dark.text-white {
+    background: linear-gradient(135deg, #ffca28, #ffa000);
+    color: #3e2723;
+    box-shadow: 0 8px 20px rgba(255, 193, 7, 0.7);
+    border-radius: 20px;
+}
+
+.modal-header {
+    border-bottom: 2px solid #ffb300;
+}
+
+.modal-title {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #4e342e;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.btn-outline-light {
+    color: #4e342e !important;
+    border-color: #4e342e !important;
+    font-weight: 700;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-outline-light:hover {
+    background-color: #4e342e !important;
+    color: #ffca28 !important;
+}
