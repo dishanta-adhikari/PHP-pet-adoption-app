@@ -1,0 +1,130 @@
+/* General page background */
+body {
+    background-color: #fffbea;
+    /* soft pale yellow */
+    color: #444;
+    /* dark gray text */
+    font-family: 'Poppins', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Headers */
+h2,
+h4 {
+    color: #d4a017;
+    /* golden yellow */
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #f7c948;
+    /* warm yellow */
+    border-color: #d4a017;
+    color: #333;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: #d4a017;
+    color: white;
+    border-color: #b38f0b;
+}
+
+/* Info button in table */
+.btn-info {
+    background-color: #f7e380;
+    color: #666;
+    border: none;
+    font-weight: 700;
+}
+
+.btn-info:hover,
+.btn-info:focus {
+    background-color: #d4a017;
+    color: white;
+}
+
+/* Logout button */
+.btn-danger {
+    background-color: #d9534f;
+    border-color: #d43f3a;
+}
+
+/* Badges */
+.badge.bg-warning {
+    background-color: #f7c948;
+    color: #333;
+    font-weight: 600;
+}
+
+.badge.bg-success {
+    background-color: #a5c11e;
+    color: white;
+    font-weight: 600;
+}
+
+.badge.bg-danger {
+    background-color: #e74c3c;
+    font-weight: 600;
+}
+
+/* Card styles */
+.card {
+    box-shadow: 0 3px 8px rgba(212, 160, 23, 0.3);
+    border: none;
+    border-radius: 10px;
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(212, 160, 23, 0.6);
+}
+
+/* Card titles */
+.card-title {
+    color: #b38f0b;
+    font-weight: 700;
+}
+
+/* Table header */
+.table-light {
+    background-color: #fff7d1;
+}
+
+/* Modal header */
+.modal-header {
+    background-color: #f7c948;
+    color: #333;
+    font-weight: 700;
+}
+
+/* Modal footer buttons */
+.modal-footer .btn-secondary {
+    background-color: #d4a017;
+    border: none;
+    color: white;
+}
+
+.modal-footer .btn-secondary:hover {
+    background-color: #b38f0b;
+}
+
+/* Responsive text alignment on small screens */
+@media (max-width: 576px) {
+    .table-responsive {
+        font-size: 0.9rem;
+    }
+
+    h2,
+    h4 {
+        font-size: 1.4rem;
+    }
+}
+
+/* Container padding tweak */
+.container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}

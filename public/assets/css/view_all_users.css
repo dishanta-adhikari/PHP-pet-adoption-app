@@ -1,0 +1,128 @@
+/* admin-theme.css */
+
+/* Body and background */
+body {
+    background-color: #fff8e1;
+    /* Light yellow background */
+    color: #5d4037;
+    /* Dark brown text */
+    font-family: 'Poppins', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Container */
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+/* Table styling */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    background-color: #fffde7;
+    /* Pale yellow */
+    box-shadow: 0 0 8px rgba(255, 235, 59, 0.4);
+}
+
+table thead {
+    background-color: #fbc02d;
+    /* Golden yellow */
+    color: #3e2723;
+    /* Darker brown */
+    font-weight: bold;
+}
+
+table th,
+table td {
+    padding: 12px 15px;
+    border: 1px solid #fdd835;
+    /* Bright yellow border */
+    text-align: left;
+}
+
+table tbody tr:hover {
+    background-color: #fff176;
+    /* Highlight row on hover */
+}
+
+/* Buttons */
+.btn {
+    border-radius: 0;
+    font-weight: 600;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #fbc02d;
+    border-color: #fbc02d;
+    color: #3e2723;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: #f9a825;
+    border-color: #f9a825;
+    color: #fff;
+}
+
+.btn-secondary {
+    background-color: #ffee58;
+    border-color: #ffee58;
+    color: #5d4037;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus {
+    background-color: #fdd835;
+    border-color: #fdd835;
+    color: #3e2723;
+}
+
+.btn-info {
+    background-color: #ffeb3b;
+    border-color: #ffeb3b;
+    color: #5d4037;
+}
+
+.btn-info:hover,
+.btn-info:focus {
+    background-color: #fdd835;
+    border-color: #fdd835;
+    color: #3e2723;
+}
+
+/* Modal styling */
+.modal-header {
+    background-color: #fbc02d;
+    color: #3e2723;
+}
+
+h2,
+h3 {
+    color: #f9a825;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+a {
+    color: #fbc02d;
+    text-decoration: none;
+}
+
+a:hover,
+a:focus {
+    color: #f9a825;
+    text-decoration: underline;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mt-5 {
+    margin-top: 3rem !important;
+}
+
+.mb-3 {
+    margin-bottom: 1rem !important;
+}

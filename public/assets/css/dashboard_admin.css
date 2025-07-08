@@ -1,0 +1,128 @@
+:root {
+    --primary-color: #ffc107;
+    --primary-hover: #e0a800;
+    --text-color: #212529;
+    --bg-color: #fffbea;
+    --card-shadow: rgba(0, 0, 0, 0.05);
+    --card-radius: 1rem;
+    --btn-radius: 0.5rem;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Poppins', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+h1, h2, h3, h4, h5 {
+    color: var(--text-color);
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+a {
+    text-decoration: none;
+}
+
+.btn,
+.btn-primary,
+.btn-outline-primary,
+.btn-outline-secondary,
+.btn-outline-success {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #000;
+    border-radius: var(--btn-radius);
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:hover,
+.btn:focus {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    color: #000;
+}
+
+.btn-outline-primary,
+.btn-outline-secondary,
+.btn-outline-success {
+    background-color: transparent;
+    color: var(--primary-color);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-secondary:hover,
+.btn-outline-success:hover {
+    background-color: var(--primary-hover);
+    color: #000;
+}
+
+.card {
+    border: none;
+    border-radius: var(--card-radius);
+    box-shadow: 0 4px 16px var(--card-shadow);
+    height: 100%;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.card-text {
+    font-size: 1rem;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: var(--card-radius);
+    border-top-right-radius: var(--card-radius);
+}
+
+.modal-content {
+    border-radius: var(--card-radius);
+}
+
+.table {
+    background-color: white;
+}
+
+.table thead {
+    background-color: var(--primary-color);
+    color: #000;
+}
+
+.table tbody tr:hover {
+    background-color: #fff3cd;
+}
+
+@media (max-width: 768px) {
+    .d-flex.flex-column.flex-md-row {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .row-cols-md-3 > * {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
