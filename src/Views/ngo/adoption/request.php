@@ -7,12 +7,18 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'ngo') {
     exit;
 }
 
+$ngo_id = $_SESSION['user_id'];
+
 use App\Controllers\AdoptionController;
 
 $adoptionController = new AdoptionController($conn);
 
 // Fetch adoption requests for this NGO's pets
-$results = $adoptionController->getRequest($_SESSION['user_id']);
+$results = $adoptionController->getRequest($ngo_id);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $adoptionController->UpdateRequest($_POST);
+}
 
 ?>
 
@@ -20,7 +26,7 @@ $results = $adoptionController->getRequest($_SESSION['user_id']);
 <html lang="en">
 
 <head>
-    <title>Manage Adoption Requests</title>
+    <title>Adoption Requests | NGO</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="./css/manage_requests.css" rel="stylesheet">
@@ -35,8 +41,31 @@ $results = $adoptionController->getRequest($_SESSION['user_id']);
             <a href="<?= $appUrl ?>/src/Views/ngo/dashboard" class="btn btn-secondary">Back to Dashboard</a>
         </div>
 
-        <?php if (isset($_GET['msg'])): ?>
-            <div class="alert alert-success"><?= htmlspecialchars($_GET['msg']) ?></div>
+        <!-- display messages -->
+        <?php if (isset($_SESSION['success'])): ?>
+            <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+                <symbol id="check-circle-fill" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                </symbol>
+            </svg>
+
+            <div class="alert alert-success d-flex align-items-center alert-dismissible fade show container mt-3" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                    <use xlink:href="#check-circle-fill" />
+                </svg>
+                <div>
+                    <?= htmlspecialchars($_SESSION['success']) ?>
+                </div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <?php unset($_SESSION['success']); ?>
+
+        <?php elseif (isset($_SESSION['error'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show container mt-3" role="alert">
+                <?= htmlspecialchars($_SESSION['error']) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <?php unset($_SESSION['error']); ?>
         <?php endif; ?>
 
         <?php if (empty($results)): ?>
@@ -74,12 +103,14 @@ $results = $adoptionController->getRequest($_SESSION['user_id']);
                                 </td>
                                 <td>
                                     <?php if (strtolower($req['status']) === 'pending'): ?>
-                                        <form action="<?= $appUrl ?>/src/Views/ngo/adoption/update" method="POST" class="d-inline-block mb-1 mb-md-0 me-1">
+                                        <form action="" method="POST" class="d-inline-block mb-1 mb-md-0 me-1">
                                             <input type="hidden" name="id" value="<?= $req['request_id'] ?>">
+                                            <input type="hidden" name="adoption_id" value="<?= $req['request_id'] ?>">
+                                            <input type="hidden" name="adoption_id" value="<?= $req['request_id'] ?>">
                                             <input type="hidden" name="action" value="approve">
                                             <button type="submit" class="btn btn-success btn-sm w-100 w-md-auto">Approve</button>
                                         </form>
-                                        <form action="<?= $appUrl ?>/src/Views/ngo/adoption/update" method="POST" class="d-inline-block">
+                                        <form action="" method="POST" class="d-inline-block">
                                             <input type="hidden" name="id" value="<?= $req['request_id'] ?>">
                                             <input type="hidden" name="action" value="reject">
                                             <button type="submit" class="btn btn-danger btn-sm w-100 w-md-auto">Reject</button>

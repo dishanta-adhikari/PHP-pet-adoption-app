@@ -64,4 +64,36 @@ class Pet
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
+
+    public function checkValidAdoption($values)
+    {
+        $stmt = $this->conn->prepare("
+        SELECT pets.id AS pet_id FROM adoptions
+        JOIN pets ON adoptions.pet_id = pets.id
+        WHERE adoptions.id = ? AND pets.ngo_id = ?
+        ");
+        $stmt->bind_param("ii", $values['adoption_id'], $values['ngo_id']);
+        $stmt->execute();
+        return $stmt->get_result();
+    }
+
+    public function updateStatus($values)
+    {
+        $stmt = $this->conn->prepare("UPDATE adoptions SET status = ? WHERE id = ?");
+        $stmt->bind_param("si", $values['status'], $values['adoption_id']);
+        if ($stmt->execute()) {
+            return true;
+        }
+        return false;
+    }
+
+    public function petStatus($pet_id)
+    {
+        $stmt = $this->conn->prepare("UPDATE pets SET status = 'Adopted' WHERE id = ?");
+        $stmt->bind_param("i", $pet_id);
+        if ($stmt->execute()) {
+            return true;
+        }
+        return false;
+    }
 }
