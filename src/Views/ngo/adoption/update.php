@@ -1,11 +1,11 @@
 <?php
-session_start();
+
+require_once __DIR__."/../../includes/_init.php";
+
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'ngo') {
     header("Location: logout");
-    exit;
+    exit();
 }
-
-include 'includes/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $adoption_id = intval($_POST['id']);
@@ -46,9 +46,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt2->execute();
     }
 
-    header("Location: manage_requests?msg=Request " . $status);
+    header("Location: ".$appUrl."/src/Views/ngo/adoption/request?msg=Request " . $status);
     exit;
 } else {
-    header("Location: manage_requests");
+    header("Location: ".$appUrl."/src/Views/ngo/dashboard");
     exit;
 }

@@ -1,39 +1,22 @@
 <?php
-
-require_once __DIR__."/../../_init.php";
+require_once __DIR__ . "/../includes/_init.php";
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'ngo') {
-    header("Location: logout");
+    header("Location: " . $appUrl);
     exit;
 }
 
-$ngo_id = $_SESSION['user_id'];
+use App\Controllers\PetController;
 
 // Fetch pets with adopter info if adopted
-$pets = [];
-try {
-    $stmt = $conn->prepare("
-        SELECT pets.*, 
-               adoptions.status AS adoption_status,
-               adopters.name AS adopter_name,
-               adopters.email AS adopter_email,
-               adopters.phone AS adopter_phone,
-               adopters.address AS adopter_address
-        FROM pets 
-        LEFT JOIN adoptions ON pets.id = adoptions.pet_id
-        LEFT JOIN adopters ON adoptions.adopter_id = adopters.id
-        WHERE pets.ngo_id = ?
-        ORDER BY pets.id DESC
-    ");
-    $stmt->bind_param("i", $ngo_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    while ($row = $result->fetch_assoc()) {
-        $pets[] = $row;
-    }
-} catch (Exception $e) {
-    die("Error loading pets: " . $e->getMessage());
+$petContrlloer = new PetController($conn);
+$results = $petContrlloer->getWithAdopter($_SESSION['user_id']);
+
+// create a new pet
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_pet'])) {
+    $create = $petContrlloer->create($_POST);
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -63,15 +46,41 @@ try {
         <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-3">
             <h2 class="mb-3 mb-md-0">Welcome, <?= htmlspecialchars($_SESSION['name']) ?> (NGO)</h2>
             <div>
-                <a href="<?= $appUrl ?>/src/Views/ngo/requests" class="btn btn-primary me-2 mb-2 mb-md-0">Manage Requests</a>
+                <a href="<?= $appUrl ?>/src/Views/ngo/adoption/request" class="btn btn-primary me-2 mb-2 mb-md-0">Approve Requests</a>
                 <!-- <a href="logout" class="btn btn-danger mb-2 mb-md-0">Logout</a> -->
             </div>
         </div>
 
-        <h4>Add a New Pet</h4>
-        <form action="add_pet" method="POST" enctype="multipart/form-data" class="row g-3 mb-4">
-            <input type="hidden" name="ngo_id" value="<?= $ngo_id ?>">
+        <!-- display messages -->
+        <?php if (isset($_SESSION['success'])): ?>
+            <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+                <symbol id="check-circle-fill" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                </symbol>
+            </svg>
 
+            <div class="alert alert-success d-flex align-items-center alert-dismissible fade show container mt-3" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                    <use xlink:href="#check-circle-fill" />
+                </svg>
+                <div>
+                    <?= htmlspecialchars($_SESSION['success']) ?>
+                </div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <?php unset($_SESSION['success']); ?>
+
+        <?php elseif (isset($_SESSION['error'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show container mt-3" role="alert">
+                <?= htmlspecialchars($_SESSION['error']) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <?php unset($_SESSION['error']); ?>
+        <?php endif; ?>
+
+        <h4>New Pet</h4>
+        <form action="" method="POST" enctype="multipart/form-data" class="row g-3 mb-4">
+            <input type="hidden" name="ngo_id" value="<?= $_SESSION['user_id'] ?>">
             <div class="col-md-6">
                 <input type="text" name="name" class="form-control" placeholder="Pet Name" required>
             </div>
@@ -101,7 +110,7 @@ try {
                 <textarea name="description" class="form-control" placeholder="Short Description"></textarea>
             </div>
             <div class="col-12">
-                <button type="submit" name="add_pet" class="btn btn-success w-100">Add Pet</button>
+                <button type="submit" name="add_pet" class="btn btn-success w-100">Create</button>
             </div>
         </form>
 
@@ -110,10 +119,10 @@ try {
 
         <h4>My Listed Pets</h4>
         <div class="row row-cols-1 row-cols-md-3 g-4">
-            <?php if (empty($pets)): ?>
+            <?php if (empty($results)): ?>
                 <p class="text-muted">No pets listed yet.</p>
             <?php else: ?>
-                <?php foreach ($pets as $pet): ?>
+                <?php foreach ($results as $pet): ?>
                     <div class="col">
                         <div class="card h-100">
                             <?php if ($pet['image']): ?>

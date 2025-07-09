@@ -1,38 +1,19 @@
 <?php
 
-require_once __DIR__."/../../_init.php";
+require_once __DIR__ . "/../../includes/_init.php";
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'ngo') {
     header("Location: logout");
     exit;
 }
 
+use App\Controllers\AdoptionController;
 
-$ngo_id = $_SESSION['user_id'];
+$adoptionController = new AdoptionController($conn);
 
 // Fetch adoption requests for this NGO's pets
-$requests = [];
-try {
-    $stmt = $conn->prepare("
-        SELECT 
-            adoptions.id AS request_id, 
-            pets.name AS pet_name, 
-            adopters.name AS adopter_name, 
-            adoptions.status
-        FROM adoptions
-        JOIN pets ON adoptions.pet_id = pets.id
-        JOIN adopters ON adoptions.adopter_id = adopters.id
-        WHERE pets.ngo_id = ?
-    ");
-    $stmt->bind_param("i", $ngo_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    while ($row = $result->fetch_assoc()) {
-        $requests[] = $row;
-    }
-} catch (Exception $e) {
-    die("Error fetching adoption requests: " . $e->getMessage());
-}
+$results = $adoptionController->getRequest($_SESSION['user_id']);
+
 ?>
 
 <!DOCTYPE html>
@@ -58,7 +39,7 @@ try {
             <div class="alert alert-success"><?= htmlspecialchars($_GET['msg']) ?></div>
         <?php endif; ?>
 
-        <?php if (empty($requests)): ?>
+        <?php if (empty($results)): ?>
             <p>No adoption requests at this time.</p>
         <?php else: ?>
             <div class="table-responsive">
@@ -73,32 +54,32 @@ try {
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($requests as $req): ?>
+                        <?php foreach ($results as $req): ?>
                             <tr>
                                 <td><?= htmlspecialchars($req['pet_name']) ?></td>
                                 <td><?= htmlspecialchars($req['adopter_name']) ?></td>
                                 <td>
-                                    <?php 
-                                        $status = strtolower($req['status']);
-                                        if ($status === 'pending') {
-                                            echo '<span class="badge bg-warning text-dark">Pending</span>';
-                                        } elseif ($status === 'approved') {
-                                            echo '<span class="badge bg-success">Approved</span>';
-                                        } elseif ($status === 'rejected') {
-                                            echo '<span class="badge bg-danger">Rejected</span>';
-                                        } else {
-                                            echo '<span class="badge bg-secondary">' . htmlspecialchars($req['status']) . '</span>';
-                                        }
+                                    <?php
+                                    $status = strtolower($req['status']);
+                                    if ($status === 'pending') {
+                                        echo '<span class="badge bg-warning text-dark">Pending</span>';
+                                    } elseif ($status === 'approved') {
+                                        echo '<span class="badge bg-success">Approved</span>';
+                                    } elseif ($status === 'rejected') {
+                                        echo '<span class="badge bg-danger">Rejected</span>';
+                                    } else {
+                                        echo '<span class="badge bg-secondary">' . htmlspecialchars($req['status']) . '</span>';
+                                    }
                                     ?>
                                 </td>
                                 <td>
                                     <?php if (strtolower($req['status']) === 'pending'): ?>
-                                        <form action="update_adoption_status" method="POST" class="d-inline-block mb-1 mb-md-0 me-1">
+                                        <form action="<?= $appUrl ?>/src/Views/ngo/adoption/update" method="POST" class="d-inline-block mb-1 mb-md-0 me-1">
                                             <input type="hidden" name="id" value="<?= $req['request_id'] ?>">
                                             <input type="hidden" name="action" value="approve">
                                             <button type="submit" class="btn btn-success btn-sm w-100 w-md-auto">Approve</button>
                                         </form>
-                                        <form action="update_adoption_status" method="POST" class="d-inline-block">
+                                        <form action="<?= $appUrl ?>/src/Views/ngo/adoption/update" method="POST" class="d-inline-block">
                                             <input type="hidden" name="id" value="<?= $req['request_id'] ?>">
                                             <input type="hidden" name="action" value="reject">
                                             <button type="submit" class="btn btn-danger btn-sm w-100 w-md-auto">Reject</button>

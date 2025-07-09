@@ -1,47 +1,28 @@
 <?php
-
-require_once __DIR__ . "/../../_init.php";
-
+require_once __DIR__ . "/../includes/_init.php";
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'adopter') {
-    header("Location: logout");
+    header("Location: " . $appUrl);
     exit;
 }
 
+use App\Controllers\PetController;
+use App\Controllers\AdopterController;
+use App\Controllers\AdoptionController;
+
 $adopter_id = $_SESSION['user_id'];
 
-// Fetch available pets
-$pets = [];
-try {
-    $stmt = $conn->prepare("SELECT pets.*, ngos.name AS ngo_name FROM pets JOIN ngos ON pets.ngo_id = ngos.id WHERE pets.status = 'Available'");
-    $stmt->execute();
-    $result = $stmt->get_result();
-    while ($row = $result->fetch_assoc()) {
-        $pets[] = $row;
-    }
-} catch (Exception $e) {
-    die("Error fetching pets: " . $e->getMessage());
+// Handle adoption request POST inside the dashboard
+$adoptionController = new AdoptionController($conn);
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_adoption'])) {
+    $adoptionController->create($_POST);
 }
 
-// Fetch adoption requests from 'adoptions' table with NGO details
-$requests = [];
-try {
-    $stmt = $conn->prepare("
-        SELECT a.id, p.name AS pet_name, p.species, a.status, 
-               ngos.name AS ngo_name, ngos.email AS ngo_email, ngos.phone AS ngo_phone, ngos.address AS ngo_address
-        FROM adoptions a
-        JOIN pets p ON a.pet_id = p.id
-        JOIN ngos ON p.ngo_id = ngos.id
-        WHERE a.adopter_id = ?
-    ");
-    $stmt->bind_param("i", $adopter_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    while ($row = $result->fetch_assoc()) {
-        $requests[] = $row;
-    }
-} catch (Exception $e) {
-    die("Error fetching your adoption requests: " . $e->getMessage());
-}
+// Fetch all pets and existing requests
+$petController = new PetController($conn);
+$pets = $petController->getAvailablePets();
+
+$adopterController = new AdopterController($conn);
+$requests = $adopterController->getRequest($adopter_id);
 ?>
 
 <!DOCTYPE html>
@@ -128,9 +109,34 @@ try {
         </div>
 
         <h4>Available Pets for Adoption</h4>
-        <?php if (isset($_GET['success'])): ?>
-            <div class="alert alert-success">Adoption request submitted!</div>
+
+        <!-- display messages -->
+        <?php if (isset($_SESSION['success'])): ?>
+            <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+                <symbol id="check-circle-fill" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                </symbol>
+            </svg>
+
+            <div class="alert alert-success d-flex align-items-center alert-dismissible fade show container mt-3" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                    <use xlink:href="#check-circle-fill" />
+                </svg>
+                <div>
+                    <?= htmlspecialchars($_SESSION['success']) ?>
+                </div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <?php unset($_SESSION['success']); ?>
+
+        <?php elseif (isset($_SESSION['error'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show container mt-3" role="alert">
+                <?= htmlspecialchars($_SESSION['error']) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <?php unset($_SESSION['error']); ?>
         <?php endif; ?>
+
 
         <div class="row">
             <?php if (empty($pets)): ?>
@@ -150,7 +156,7 @@ try {
                                 <h5 class="card-title"><?= htmlspecialchars($pet['name']) ?> (<?= htmlspecialchars($pet['species']) ?>)</h5>
                                 <p class="card-text flex-grow-1"><?= htmlspecialchars($pet['description']) ?></p>
                                 <p class="mb-2">NGO: <?= htmlspecialchars($pet['ngo_name']) ?></p>
-                                <form action="<?= $appUrl ?>/src/Views/adopter/adopt" method="POST" class="mt-auto">
+                                <form action="" method="POST" class="mt-auto">
                                     <input type="hidden" name="pet_id" value="<?= $pet['id'] ?>">
                                     <input type="hidden" name="adopter_id" value="<?= $adopter_id ?>">
                                     <button type="submit" name="request_adoption" class="btn btn-primary w-100">Request Adoption</button>

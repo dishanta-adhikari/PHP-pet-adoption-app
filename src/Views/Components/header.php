@@ -1,6 +1,4 @@
 <?php
-session_start();
-
 // Set user info if logged in
 $userName = $_SESSION['name'] ?? 'Guest';
 $userRole = $_SESSION['role'] ?? 'visitor';

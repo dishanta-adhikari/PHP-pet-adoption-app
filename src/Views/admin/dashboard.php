@@ -1,9 +1,9 @@
 <?php
 
-require_once __DIR__."/../../_init.php";
+require_once __DIR__ . "/../includes/_init.php";
 
-if (!isset($_SESSION['admin_id']) || $_SESSION['role'] !== 'admin') {
-    header("Location: logout");
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    header("Location: " . $appUrl);
     exit;
 }
 

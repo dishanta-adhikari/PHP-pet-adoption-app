@@ -1,9 +1,10 @@
 <?php
+require_once __DIR__ . "/../Views/Components/home-header.php";
 
-require_once __DIR__."/../Views/Components/home-header.php";
-
+if (isset($_SESSION['user_id']) && isset($_SESSION['role'])) {
+    header("Location:" . $appUrl . "/src/Views/" . $_SESSION['role'] . "/dashboard");
+}
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,13 +13,11 @@ require_once __DIR__."/../Views/Components/home-header.php";
     <meta charset="UTF-8" />
     <title>Pet Adoption System</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
     <!-- Bootstrap CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-
     <!-- Animate.css CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-    <link rel="stylesheet" href="<?php echo $appUrl; ?>/public/assets/css/index.css">
+    <link rel="stylesheet" href="<?= $appUrl ?>/public/assets/css/index.css">
     <style>
         body,
         html {
@@ -43,7 +42,7 @@ require_once __DIR__."/../Views/Components/home-header.php";
         </p>
 
         <div class="search-bar animate__animated animate__fadeInUp animate__delay-2s">
-            <form class="d-flex justify-content-center" action="search_results" method="GET">
+            <form class="d-flex justify-content-center" action="<?= $appUrl ?>/src/Views/search/index" method="GET">
                 <input class="form-control me-2 w-75" name="query" type="search" placeholder="Search by city, breed or NGO" aria-label="Search" required />
                 <button class="btn btn-warning" type="submit">Search</button>
             </form>
@@ -75,33 +74,33 @@ require_once __DIR__."/../Views/Components/home-header.php";
         <div class="marquee-content">
             <!-- Original set -->
             <div class="featured-pet">
-                <img src="<?php echo $appUrl; ?>/public/assets/images/dog1.jpg" alt="Bella" />
+                <img src="<?= $appUrl ?>/public/assets/images/dog1.jpg" alt="Bella" />
                 <h5>Bella</h5>
                 <p>2-year-old Beagle, very friendly and loves kids.</p>
             </div>
             <div class="featured-pet">
-                <img src="<?php echo $appUrl; ?>/public/assets/images/parrot.jpg" alt="Rocky" />
+                <img src="<?= $appUrl ?>/public/assets/images/parrot.jpg" alt="Rocky" />
                 <h5>Rocky</h5>
                 <p>Energetic German Shepherd, trained and vaccinated.</p>
             </div>
             <div class="featured-pet">
-                <img src="<?php echo $appUrl; ?>/public/assets/images/dog1.jpg" alt="Luna" />
+                <img src="<?= $appUrl ?>/public/assets/images/dog1.jpg" alt="Luna" />
                 <h5>Luna</h5>
                 <p>Playful tabby cat, loves cuddles and naps.</p>
             </div>
             <!-- Duplicate set for seamless scrolling -->
             <div class="featured-pet">
-                <img src="<?php echo $appUrl; ?>/public/assets/images/parrot.jpg" alt="Bella" />
+                <img src="<?= $appUrl ?>/public/assets/images/parrot.jpg" alt="Bella" />
                 <h5>Bella</h5>
                 <p>2-year-old Beagle, very friendly and loves kids.</p>
             </div>
             <div class="featured-pet">
-                <img src="<?php echo $appUrl; ?>/public/assets/images/dog1.jpg" alt="Rocky" />
+                <img src="<?= $appUrl ?>/public/assets/images/dog1.jpg" alt="Rocky" />
                 <h5>Rocky</h5>
                 <p>Energetic German Shepherd, trained and vaccinated.</p>
             </div>
             <div class="featured-pet">
-                <img src="<?php echo $appUrl; ?>/public/assets/images/parrot.jpg" alt="Luna" />
+                <img src="<?= $appUrl; ?>/public/assets/images/parrot.jpg" alt="Luna" />
                 <h5>Luna</h5>
                 <p>Playful tabby cat, loves cuddles and naps.</p>
             </div>
@@ -119,8 +118,8 @@ require_once __DIR__."/../Views/Components/home-header.php";
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <a href="<?php echo $appUrl; ?>/src/Views/auth/register?role=adopter" class="btn btn-outline-light btn-lg m-2 w-75">Adopter</a>
-                    <a href="<?php echo $appUrl; ?>/src/Views/auth/register?role=ngo" class="btn btn-outline-light btn-lg m-2 w-75">NGO</a>
+                    <a href="<?= $appUrl ?>/src/Views/auth/register?role=adopter" class="btn btn-outline-light btn-lg m-2 w-75">Adopter</a>
+                    <a href="<?= $appUrl ?>/src/Views/auth/register?role=ngo" class="btn btn-outline-light btn-lg m-2 w-75">NGO</a>
                 </div>
             </div>
         </div>
@@ -135,9 +134,9 @@ require_once __DIR__."/../Views/Components/home-header.php";
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <a href="<?php echo $appUrl; ?>/src/Views/auth/login?role=adopter" class="btn btn-outline-light btn-lg m-2 w-75">Adopter</a>
-                    <a href="<?php echo $appUrl; ?>/src/Views/auth/login?role=ngo" class="btn btn-outline-light btn-lg m-2 w-75">NGO</a>
-                    <a href="<?php echo $appUrl; ?>/src/Views/auth/login?role=admin" class="btn btn-outline-light btn-lg m-2 w-75">Admin</a>
+                    <a href="<?= $appUrl ?>/src/Views/auth/login?role=adopter" class="btn btn-outline-light btn-lg m-2 w-75">Adopter</a>
+                    <a href="<?= $appUrl ?>/src/Views/auth/login?role=ngo" class="btn btn-outline-light btn-lg m-2 w-75">NGO</a>
+                    <a href="<?= $appUrl ?>/src/Views/auth/login?role=admin" class="btn btn-outline-light btn-lg m-2 w-75">Admin</a>
                 </div>
             </div>
         </div>

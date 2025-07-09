@@ -1,21 +1,23 @@
 <?php
 
-require_once __DIR__ . "/../../_init.php";
+require_once __DIR__ . "/../includes/_init.php";
 
-$allowed_roles = ['adopter', 'ngo'];
-$role = isset($_GET['role']) && in_array($_GET['role'], $allowed_roles) ? $_GET['role'] : null;
-
-if (!$role) {
-    echo "<div class='alert alert-danger m-5'>Invalid role. Please go back and select Adopter or NGO.</div>";
-    exit;
+if (isset($_SESSION['user_id']) && isset($_SESSION['role'])) {
+    header("Location:" . $appUrl . "/src/Views/" . $_SESSION['role'] . "/dashboard");
 }
+
+use App\Controllers\RegisterController;
+
+$registerContrller = new RegisterController($conn);
+$registerContrller->register($_POST);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8" />
-    <title>Register as <?= ucfirst($role) ?></title>
+    <title>Register as <?= ucfirst($_GET['role']) ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- Bootstrap CSS CDN -->
@@ -124,7 +126,15 @@ if (!$role) {
             <div class="col-11 col-sm-10 col-md-8 col-lg-6 col-xl-5">
                 <div class="card register-card">
                     <div class="card-body p-4 p-md-5">
-                        <h3 class="text-center mb-4">Register as <?= ucfirst($role) ?></h3>
+                        <h3 class="text-center mb-4">Register as <?= ucfirst($_GET['role']) ?></h3>
+
+                        <?php if (isset($_SESSION['error'])): ?>
+                            <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                                <?= htmlspecialchars($_SESSION['error']) ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            <?php unset($_SESSION['error']); ?>
+                        <?php endif; ?>
 
                         <form method="POST">
                             <div class="form-floating mb-3">
@@ -133,9 +143,9 @@ if (!$role) {
                                     name="name"
                                     class="form-control"
                                     id="nameInput"
-                                    placeholder="<?= $role === 'ngo' ? 'NGO Name' : 'Full Name' ?>"
+                                    placeholder="<?= $_GET['role'] === 'ngo' ? 'NGO Name' : 'Full Name' ?>"
                                     required />
-                                <label for="nameInput"><?= $role === 'ngo' ? 'NGO Name' : 'Full Name' ?></label>
+                                <label for="nameInput"><?= $_GET['role'] === 'ngo' ? 'NGO Name' : 'Full Name' ?></label>
                             </div>
 
                             <div class="form-floating mb-3">
@@ -185,58 +195,13 @@ if (!$role) {
                             <button
                                 type="submit"
                                 name="register"
-                                class="btn <?= $role === 'ngo' ? 'btn-success' : 'btn-primary' ?> w-100 py-2">
+                                class="btn <?= $_GET['role'] === 'ngo' ? 'btn-success' : 'btn-primary' ?> w-100 py-2">
                                 Register
                             </button>
                         </form>
 
-                        <?php
-                        if (isset($_POST['register'])) {
-                            $name = $_POST['name'];
-                            $email = $_POST['email'];
-                            $password_plain = $_POST['password'];
-                            $password_hashed = password_hash($password_plain, PASSWORD_BCRYPT);
-                            $phone = $_POST['phone'];
-                            $address = $_POST['address'];
-
-                            try {
-                                if ($role === 'adopter') {
-                                    $stmt = $conn->prepare("INSERT INTO adopters (name, email, password, phone, address) VALUES (?, ?, ?, ?, ?)");
-                                } else {
-                                    $stmt = $conn->prepare("INSERT INTO ngos (name, email, password, phone, address) VALUES (?, ?, ?, ?, ?)");
-                                }
-
-                                if (!$stmt) {
-                                    throw new Exception("Prepare failed: " . $conn->error);
-                                }
-
-                                $stmt->bind_param("sssss", $name, $email, $password_hashed, $phone, $address);
-
-                                if ($stmt->execute()) {
-                                    $user_id = $stmt->insert_id;
-                                    $_SESSION['user_id'] = $user_id;
-                                    $_SESSION['name'] = $name;
-                                    $_SESSION['role'] = $role;
-
-                                    echo "<div class='alert alert-success mt-4'>Registration successful! Redirecting...</div>";
-                                    echo "<script>
-                                        setTimeout(function() {
-                                            window.location.href = '" . $appUrl . "/src/Views/" . $role . "/dashboard';
-                                        }, 2000);
-                                    </script>";
-                                } else {
-                                    throw new Exception("Execute failed: " . $stmt->error);
-                                }
-
-                                $stmt->close();
-                            } catch (Exception $e) {
-                                echo "<div class='alert alert-danger mt-3'>Error: " . htmlspecialchars($e->getMessage()) . "</div>";
-                            }
-                        }
-                        ?>
-
                         <div class="text-center mt-4">
-                            <p>Already have an account? <a href="login?role=<?= $role ?>">Login here</a></p>
+                            <p>Already have an account? <a href="login?role=<?= $_GET['role'] ?>">Login here</a></p>
                             <p><a href="<?= $appUrl ?>">← Back to Home</a></p>
                         </div>
                     </div>
