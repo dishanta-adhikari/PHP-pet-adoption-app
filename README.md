@@ -100,6 +100,6 @@ http://localhost/PHP-pet-adoption-system
 
 ## License
 
-This project is open-source and available under the MIT License.
+This project is open-source and available under the **MIT License**.
 
 Made with ❤️ to help every pet find a home.
