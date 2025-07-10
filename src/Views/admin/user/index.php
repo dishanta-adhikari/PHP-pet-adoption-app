@@ -1,33 +1,22 @@
 <?php
 
-require_once __DIR__."/../../_init.php";
+require_once __DIR__ . "/../../includes/_init.php";
 
-if (!isset($_SESSION['admin_id']) || $_SESSION['role'] !== 'admin') {
-    header("Location: logout");
-    exit;
-}
+use App\Controllers\AdminController;
+
+$admin = new AdminController($conn);
+$admin->verifyAdmin();
+
+$users = $admin->getAll();
 
 
-try {
-    $stmt = $conn->prepare("
-        SELECT id, name, email, 'adopter' AS role FROM adopters
-        UNION
-        SELECT id, name, email, 'ngo' AS role FROM ngos
-        ORDER BY role, name
-    ");
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $users = $result->fetch_all(MYSQLI_ASSOC);
-} catch (Exception $e) {
-    die("Error fetching users: " . $e->getMessage());
-}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>All Users</title>
+    <title>All Users | ADMIN</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -64,7 +53,6 @@ try {
             <table class="table table-bordered table-striped table-hover bg-white">
                 <thead>
                     <tr>
-                        <th scope="col">ID</th>
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
                         <th scope="col">Role</th>
@@ -74,7 +62,6 @@ try {
                 <tbody>
                     <?php foreach ($users as $user): ?>
                         <tr data-role="<?= htmlspecialchars($user['role']) ?>">
-                            <td><?= htmlspecialchars($user['id']) ?></td>
                             <td><?= htmlspecialchars($user['name']) ?></td>
                             <td><?= htmlspecialchars($user['email']) ?></td>
                             <td><?= htmlspecialchars($user['role']) ?></td>
@@ -116,6 +103,7 @@ try {
             </div>
         </div>
     </div>
+
 
     <!-- JS Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

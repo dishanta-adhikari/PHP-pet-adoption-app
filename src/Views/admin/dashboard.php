@@ -2,34 +2,23 @@
 
 require_once __DIR__ . "/../includes/_init.php";
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    header("Location: " . $appUrl);
-    exit;
-}
+use App\Controllers\AdminController;
 
+$admin = new AdminController($conn);
+$admin->verifyAdmin();
 
-try {
-    // Total pets
-    $totalPets = $conn->query("SELECT COUNT(*) as count FROM pets")->fetch_assoc()['count'];
+$totalPets = $admin->getAllCount('pets'); // Total pets
+$totalNGOs = $admin->getAllCount('ngos'); // Total NGOs
+$totalAdopters = $admin->getAllCount('adopters'); // Total Adopters
+$totalAdoptions = $admin->getAllCount('adoptions'); // Total Adoptions
 
-    // Total NGOs
-    $totalNGOs = $conn->query("SELECT COUNT(*) as count FROM ngos ")->fetch_assoc()['count'];
-
-    // Total Adopters
-    $totalAdopters = $conn->query("SELECT COUNT(*) as count FROM adopters")->fetch_assoc()['count'];
-
-    // Total Adoptions
-    $totalAdoptions = $conn->query("SELECT COUNT(*) as count FROM adoptions WHERE status = 'Approved'")->fetch_assoc()['count'];
-} catch (Exception $e) {
-    die("Error fetching admin stats: " . $e->getMessage());
-}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>Admin Dashboard</title>
+    <title>Dashboard | ADMIN</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -38,10 +27,25 @@ try {
 
 <body class="bg-light">
     <div class="container mt-4 mt-md-5">
-        <h2 class="mb-4 text-center text-md-start">Admin Dashboard</h2>
-        <!-- <a href="logout" class="btn btn-danger">Logout</a> -->
+        <h2 class="mb-4 text-center text-md-start">Dashboard | ADMIN</h2>
+        <?php if (isset($_SESSION['success'])): ?>
+            <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+                <symbol id="check-circle-fill" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                </symbol>
+            </svg>
 
-        <hr>
+            <div class="alert alert-success d-flex align-items-center alert-dismissible fade show container mt-3" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                    <use xlink:href="#check-circle-fill" />
+                </svg>
+                <div>
+                    <?= htmlspecialchars($_SESSION['success']) ?>
+                </div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php unset($_SESSION['success']);
+        endif; ?>
 
         <div class="row text-center text-md-start g-3">
             <div class="col-6 col-md-3">
@@ -79,9 +83,10 @@ try {
         </div>
 
         <div class="d-flex flex-column flex-md-row gap-2 gap-md-3 mt-4 justify-content-center justify-content-md-start">
-            <a href="<?= $appUrl ?>/src/Views/admin/users" class="btn btn-outline-primary flex-fill flex-md-grow-0">View All Users</a>
-            <a href="<?= $appUrl ?>/src/Views/admin/pets" class="btn btn-outline-secondary flex-fill flex-md-grow-0">View All Pets</a>
-            <a href="<?= $appUrl ?>/src/Views/admin/adoptions" class="btn btn-outline-success flex-fill flex-md-grow-0">View All Adoptions</a>
+            <a href="<?= $appUrl ?>/src/Views/admin/user/index" class="btn btn-outline-primary flex-fill flex-md-grow-0">View All Users</a>
+            <a href="<?= $appUrl ?>/src/Views/admin/pet/index" class="btn btn-outline-secondary flex-fill flex-md-grow-0">View All Pets</a>
+            <a href="<?= $appUrl ?>/src/Views/admin/adoption/index" class="btn btn-outline-success flex-fill flex-md-grow-0">View All Adoptions</a>
+            <a href="<?= $appUrl ?>/src/Views/admin/create" class="btn btn-outline-success flex-fill flex-md-grow-0">Create New Admin</a>
         </div>
     </div>
 </body>

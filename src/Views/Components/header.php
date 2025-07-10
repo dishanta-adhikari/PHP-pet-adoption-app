@@ -2,7 +2,9 @@
 // Set user info if logged in
 $userName = $_SESSION['name'] ?? 'Guest';
 $userRole = $_SESSION['role'] ?? 'visitor';
+
 ?>
+
 <!-- Google Font -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
@@ -50,7 +52,7 @@ $userRole = $_SESSION['role'] ?? 'visitor';
 <header class="sticky-header">
     <div class="container d-flex justify-content-between align-items-center">
         <div class="logo">
-            <a href="dashboard_admin.php" class="site-title">Pet Adoption Portal</a>
+            <a href="#" class="site-title">Pet Adoption Portal</a>
         </div>
         <div class="user-info">
             <span><?= htmlspecialchars(ucfirst($userRole)) ?>: <?= htmlspecialchars($userName) ?></span>

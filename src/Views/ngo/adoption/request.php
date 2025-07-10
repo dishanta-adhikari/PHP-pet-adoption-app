@@ -2,19 +2,15 @@
 
 require_once __DIR__ . "/../../includes/_init.php";
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'ngo') {
-    header("Location: logout");
-    exit;
-}
-
-$ngo_id = $_SESSION['user_id'];
-
+use App\Controllers\NgoController;
 use App\Controllers\AdoptionController;
 
-$adoptionController = new AdoptionController($conn);
+$ngo = new NgoController($conn);
+$ngo->verifyNgo();
 
-// Fetch adoption requests for this NGO's pets
-$results = $adoptionController->getRequest($ngo_id);
+$ngo_id = $_SESSION['user_id'];
+$adoptionController = new AdoptionController($conn);
+$results = $adoptionController->getRequest($ngo_id); // Fetch adoption requests for this NGO's pets
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $adoptionController->UpdateRequest($_POST);

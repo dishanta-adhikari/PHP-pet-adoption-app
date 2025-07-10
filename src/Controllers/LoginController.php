@@ -22,7 +22,7 @@ class LoginController
     public function login($values)
     {
         $allowed_roles = ['adopter', 'ngo', 'admin'];
-        $role = isset($_GET['role']) && in_array($_GET['role'], $allowed_roles) ? $_GET['role'] : null;
+        $role = isset($_GET['role']) && in_array($_GET['role'], $allowed_roles) ? $_GET['role'] : '';
 
         if (!$role) {
             $_SESSION['error'] = "Role is not defined.";
@@ -77,6 +77,13 @@ class LoginController
                 header("Location: " . APP_URL . "/src/Views/auth/login?role=$role");
                 exit;
             }
+        }
+    }
+
+    public function verifyUserLoggedIn()
+    {
+        if (isset($_SESSION['user_id']) && isset($_SESSION['role'])) {
+            header("Location:" . APP_URL . "/src/Views/" . $_SESSION['role'] . "/dashboard");
         }
     }
 }

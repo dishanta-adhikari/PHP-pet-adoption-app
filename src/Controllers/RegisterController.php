@@ -19,11 +19,11 @@ class RegisterController
     public function register($values)
     {
         $allowed_roles = ['adopter', 'ngo'];
-        $role = isset($_GET['role']) && in_array($_GET['role'], $allowed_roles) ? $_GET['role'] : null;
+        $role = isset($_GET['role']) && in_array($_GET['role'], $allowed_roles) ? $_GET['role'] : '';
 
         if (!$role) {
             $_SESSION['error'] = "Role is not defined.";
-            header("Location: " . APP_URL . "/src/Views/auth/login");
+            header("Location: " . APP_URL . "/src/Views/auth/register");
             exit;
         }
 

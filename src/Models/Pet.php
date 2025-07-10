@@ -32,6 +32,14 @@ class Pet
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
+    public function getAll()
+    {
+        $stmt = $this->conn->prepare("SELECT pets.*, ngos.name AS ngo_name FROM pets JOIN ngos ON pets.ngo_id = ngos.id ORDER BY pets.status");
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);;
+    }
+
+
     public function getBySearch($likeQuery)
     {
         $stmt = $this->conn->prepare("

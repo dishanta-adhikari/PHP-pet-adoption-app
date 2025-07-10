@@ -1,14 +1,14 @@
 <?php
 require_once __DIR__ . "/../includes/_init.php";
 
-if (isset($_SESSION['user_id']) && isset($_SESSION['role'])) {
-    header("Location:" . $appUrl . "/src/Views/" . $_SESSION['role'] . "/dashboard");
-}
-
 use App\Controllers\LoginController;
 
 $loginController = new LoginController($conn);
-$loginController->login($_POST);
+$loginController->verifyUserLoggedIn();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $loginController->login($_POST);
+}
 
 ?>
 <!DOCTYPE html>
@@ -16,7 +16,7 @@ $loginController->login($_POST);
 
 <head>
     <meta charset="UTF-8" />
-    <title><?= ucfirst($_GET['role']) ?> Login</title>
+    <title><?= ucfirst($_GET['role']) ?? '' ?> Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -109,7 +109,7 @@ $loginController->login($_POST);
                     <div class="card-body p-4 p-md-5 text-center">
                         <img src="<?= APP_URL; ?>/public/assets/images/login.png" alt="Logo" class="login-logo mx-auto d-block" />
 
-                        <h3 class="mb-4"><?= ucfirst($_GET['role']) ?> Login</h3>
+                        <h3 class="mb-4"><?= ucfirst($_GET['role'] ?? '') ?> Login</h3>
 
                         <?php if (isset($_SESSION['error'])): ?>
                             <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
@@ -134,7 +134,9 @@ $loginController->login($_POST);
                         </form>
 
                         <div class="text-center mt-4 login-footer">
-                            <p>Don't have an account? <a href="register?role=<?= $_GET['role'] ?>">Register here</a></p>
+                            <?php if (($_GET['role'] ?? '') !== 'admin') : ?>
+                                <p>Don't have an account? <a href="register?role=<?= $_GET['role'] ?? '' ?>">Register here</a></p>
+                            <?php endif; ?>
                             <p><a href="<?= APP_URL ?>">← Back to Home</a></p>
                         </div>
                     </div>

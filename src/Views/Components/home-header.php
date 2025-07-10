@@ -1,16 +1,12 @@
 <?php
 session_start();
 
-// Composer autoload
-require_once __DIR__ . '/../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../vendor/autoload.php'; // Composer autoload
 require_once __DIR__ . '/../includes/Database.php';
 
 $appUrl = $_ENV['APP_URL'];
 
-// require_once __DIR__ . '/../Components/home-header.php';
-
-// Set user info if logged in
-$userName = $_SESSION['name'] ?? 'Guest';
+$userName = $_SESSION['name'] ?? 'Guest'; // Set user info if logged in
 $userRole = $_SESSION['role'] ?? 'visitor';
 ?>
 <!-- Google Font -->

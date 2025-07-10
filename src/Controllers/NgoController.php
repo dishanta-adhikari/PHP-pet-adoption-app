@@ -13,4 +13,12 @@ class NgoController
     {
         $this->Ngo = new Ngo($db);
     }
+
+    public function verifyNgo()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'ngo') {
+            header("Location: " . APP_URL);
+            exit;
+        }
+    }
 }

@@ -2,14 +2,17 @@
 
 require_once __DIR__ . "/../includes/_init.php";
 
-if (isset($_SESSION['user_id']) && isset($_SESSION['role'])) {
-    header("Location:" . $appUrl . "/src/Views/" . $_SESSION['role'] . "/dashboard");
-}
-
+use App\Controllers\LoginController;
 use App\Controllers\RegisterController;
 
+$loginController = new LoginController($conn);
+$loginController->verifyUserLoggedIn();
+
 $registerContrller = new RegisterController($conn);
-$registerContrller->register($_POST);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $registerContrller->register($_POST);
+}
+
 
 ?>
 <!DOCTYPE html>
@@ -17,7 +20,7 @@ $registerContrller->register($_POST);
 
 <head>
     <meta charset="UTF-8" />
-    <title>Register as <?= ucfirst($_GET['role']) ?></title>
+    <title>Create Account | <?= ucfirst($_GET['role']) ?? '' ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- Bootstrap CSS CDN -->
@@ -126,7 +129,7 @@ $registerContrller->register($_POST);
             <div class="col-11 col-sm-10 col-md-8 col-lg-6 col-xl-5">
                 <div class="card register-card">
                     <div class="card-body p-4 p-md-5">
-                        <h3 class="text-center mb-4">Register as <?= ucfirst($_GET['role']) ?></h3>
+                        <h3 class="text-center mb-4">Create Account <?= $_GET['role'] ?? '' ?></h3>
 
                         <?php if (isset($_SESSION['error'])): ?>
                             <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
@@ -143,9 +146,9 @@ $registerContrller->register($_POST);
                                     name="name"
                                     class="form-control"
                                     id="nameInput"
-                                    placeholder="<?= $_GET['role'] === 'ngo' ? 'NGO Name' : 'Full Name' ?>"
+                                    placeholder="<?= ($_GET['role'] ?? '')  === 'ngo' ? 'NGO Name' : 'Full Name' ?>"
                                     required />
-                                <label for="nameInput"><?= $_GET['role'] === 'ngo' ? 'NGO Name' : 'Full Name' ?></label>
+                                <label for="nameInput"><?= ($_GET['role'] ?? '') === 'ngo' ? 'NGO Name' : 'Full Name' ?></label>
                             </div>
 
                             <div class="form-floating mb-3">
@@ -195,13 +198,13 @@ $registerContrller->register($_POST);
                             <button
                                 type="submit"
                                 name="register"
-                                class="btn <?= $_GET['role'] === 'ngo' ? 'btn-success' : 'btn-primary' ?> w-100 py-2">
+                                class="btn <?= ($_GET['role'] ?? '') === 'ngo' ? 'btn-success' : 'btn-primary' ?? 'adopter' ?> w-100 py-2">
                                 Register
                             </button>
                         </form>
 
                         <div class="text-center mt-4">
-                            <p>Already have an account? <a href="login?role=<?= $_GET['role'] ?>">Login here</a></p>
+                            <p>Already have an account? <a href="login?role=<?= $_GET['role'] ?? '' ?>">Login here</a></p>
                             <p><a href="<?= $appUrl ?>">← Back to Home</a></p>
                         </div>
                     </div>

@@ -1,20 +1,17 @@
 <?php
 require_once __DIR__ . "/../includes/_init.php";
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'ngo') {
-    header("Location: " . $appUrl);
-    exit;
-}
-
+use App\Controllers\NgoController;
 use App\Controllers\PetController;
 
-// Fetch pets with adopter info if adopted
-$petContrlloer = new PetController($conn);
-$results = $petContrlloer->getWithAdopter($_SESSION['user_id']);
+$ngo = new NgoController($conn);
+$ngo->verifyNgo();
 
-// create a new pet
+$petContrlloer = new PetController($conn);
+$results = $petContrlloer->getWithAdopter($_SESSION['user_id']); // Fetch adoption requests for this NGO's pets
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_pet'])) {
-    $create = $petContrlloer->create($_POST);
+    $create = $petContrlloer->create($_POST); // create a new pet
 }
 
 ?>
@@ -69,7 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_pet'])) {
                 <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             <?php unset($_SESSION['success']); ?>
-
         <?php elseif (isset($_SESSION['error'])): ?>
             <div class="alert alert-danger alert-dismissible fade show container mt-3" role="alert">
                 <?= htmlspecialchars($_SESSION['error']) ?>

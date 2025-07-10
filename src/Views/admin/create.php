@@ -1,77 +1,44 @@
-<?php include 'includes/db.php'; ?>
+<?php
+
+require_once __DIR__ . "/../includes/_init.php";
+
+use App\Controllers\AdminController;
+
+$admin = new AdminController($conn);
+$admin->verifyAdmin();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $admin->create($_POST);
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>Register Admin</title>
+    <title>Create Admin | ADMIN</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body class="bg-light">
     <div class="container mt-5" style="max-width: 500px;">
-        <h2>Register Admin</h2>
-        <form method="POST" novalidate>
+        <h2 class="mb-4">Create Admin | ADMIN</h2>
+        <!-- display messages -->
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show container mt-3" role="alert">
+                <?= htmlspecialchars($_SESSION['error']) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <?php unset($_SESSION['error']); ?>
+        <?php endif; ?>
+
+        <form method="POST">
             <input type="text" name="name" placeholder="Full Name" class="form-control mb-3" required>
             <input type="email" name="email" placeholder="Email" class="form-control mb-3" required>
             <input type="password" name="password" placeholder="Password" class="form-control mb-3" required>
             <input type="password" name="confirm_password" placeholder="Confirm Password" class="form-control mb-3" required>
             <button type="submit" name="register" class="btn btn-primary w-100">Register</button>
         </form>
-
-        <?php
-        if (isset($_POST['register'])) {
-            $name = trim($_POST['name']);
-            $email = trim($_POST['email']);
-            $password = $_POST['password'];
-            $confirm_password = $_POST['confirm_password'];
-
-            try {
-                if (empty($name) || empty($email) || empty($password) || empty($confirm_password)) {
-                    throw new Exception("All fields are required.");
-                }
-
-                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                    throw new Exception("Invalid email format.");
-                }
-
-                if ($password !== $confirm_password) {
-                    throw new Exception("Passwords do not match.");
-                }
-
-                // Check if email already exists
-                $check_stmt = $conn->prepare("SELECT id FROM admins WHERE email = ?");
-                if (!$check_stmt) throw new Exception("Prepare failed: " . $conn->error);
-
-                $check_stmt->bind_param("s", $email);
-                $check_stmt->execute();
-                $check_result = $check_stmt->get_result();
-
-                if ($check_result->num_rows > 0) {
-                    throw new Exception("Email already registered.");
-                }
-                $check_stmt->close();
-
-                // Hash password
-                $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-
-                // Insert new admin
-                $stmt = $conn->prepare("INSERT INTO admins (name, email, password) VALUES (?, ?, ?)");
-                if (!$stmt) throw new Exception("Prepare failed: " . $conn->error);
-
-                $stmt->bind_param("sss", $name, $email, $hashed_password);
-
-                if ($stmt->execute()) {
-                    echo "<div class='alert alert-success mt-3'>Admin registered successfully!</div>";
-                } else {
-                    throw new Exception("Insert failed: " . $stmt->error);
-                }
-
-                $stmt->close();
-            } catch (Exception $e) {
-                echo "<div class='alert alert-danger mt-3'>" . htmlspecialchars($e->getMessage()) . "</div>";
-            }
-        }
-        ?>
     </div>
 </body>
 

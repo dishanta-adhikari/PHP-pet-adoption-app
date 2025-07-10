@@ -1,34 +1,21 @@
 <?php
 
-require_once __DIR__."/../../_init.php";
+require_once __DIR__ . "/../../includes/_init.php";
 
-if (!isset($_SESSION['admin_id']) || $_SESSION['role'] !== 'admin') {
-    header("Location: logout");
-    exit;
-}
+use App\Controllers\AdminController;
 
-try {
-    $stmt = $conn->prepare("
-        SELECT a.id, a.status, 
-               p.name AS pet_name, p.species, p.breed, p.age, p.gender,
-               ad.name AS adopter_name, ad.email, ad.phone, ad.address
-        FROM adoptions a
-        JOIN pets p ON a.pet_id = p.id
-        JOIN adopters ad ON a.adopter_id = ad.id
-        ORDER BY a.status DESC
-    ");
-    $stmt->execute();
-    $result = $stmt->get_result();
-} catch (Exception $e) {
-    die("Error fetching adoptions: " . $e->getMessage());
-}
+$admin = new AdminController($conn);
+$admin->verifyAdmin();
+
+$results = $admin->getAllAdoptions();
+
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>All Adoptions</title>
+    <title>All Adoptions | ADMIN</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -46,7 +33,7 @@ try {
             <table class="table table-bordered bg-white align-middle">
                 <thead class="table-dark">
                     <tr>
-                        <th scope="col">Request ID</th>
+
                         <th scope="col">Pet</th>
                         <th scope="col">Adopter</th>
                         <th scope="col">Status</th>
@@ -54,9 +41,9 @@ try {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while ($row = $result->fetch_assoc()): ?>
+                    <?php foreach ($results as $row): ?>
                         <tr>
-                            <td><?= htmlspecialchars($row['id']) ?></td>
+
                             <td><?= htmlspecialchars($row['pet_name']) ?></td>
                             <td><?= htmlspecialchars($row['adopter_name']) ?></td>
                             <td><?= htmlspecialchars($row['status']) ?></td>
@@ -70,7 +57,7 @@ try {
                                 </button>
                             </td>
                         </tr>
-                    <?php endwhile; ?>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>

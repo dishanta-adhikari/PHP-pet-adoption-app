@@ -1,27 +1,23 @@
 <?php
 
-require_once __DIR__."/../../_init.php";
+require_once __DIR__ . "/../../includes/_init.php";
 
-if (!isset($_SESSION['admin_id']) || $_SESSION['role'] !== 'admin') {
-    header("Location: logout");
-    exit;
-}
+use App\Controllers\AdminController;
+use App\Controllers\PetController;
 
+$admin = new AdminController($conn);
+$admin->verifyAdmin();
 
-try {
-    $stmt = $conn->prepare("SELECT pets.*, ngos.name AS ngo_name FROM pets JOIN ngos ON pets.ngo_id = ngos.id ORDER BY pets.status");
-    $stmt->execute();
-    $result = $stmt->get_result();
-} catch (Exception $e) {
-    die("Error fetching pets: " . $e->getMessage());
-}
+$pet = new PetController($conn);
+$result = $pet->getAll();
+
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>All Pets</title>
+    <title>All Pets | ADMIN</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -46,7 +42,7 @@ try {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while ($row = $result->fetch_assoc()): ?>
+                    <?php foreach ($result as $row): ?>
                         <tr>
                             <td><?= htmlspecialchars($row['id']) ?></td>
                             <td><?= htmlspecialchars($row['name']) ?></td>
@@ -69,7 +65,7 @@ try {
                                 </button>
                             </td>
                         </tr>
-                    <?php endwhile; ?>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>

@@ -52,6 +52,11 @@ class PetController
         }
     }
 
+    public function getAll()
+    {
+        return $this->Pet->getAll();
+    }
+
 
     public function getAvailablePets()
     {
